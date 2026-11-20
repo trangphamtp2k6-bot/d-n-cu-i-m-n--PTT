@@ -1,0 +1,11 @@
+{
+  "name": "ai-data-agent",
+  "version": "1.0.0",
+  "description": "AI Agent phân tích dữ liệu tự động theo quy trình chuẩn và xuất báo cáo HTML",
+  "main": "api/index.py",
+  "scripts": {
+    "dev": "python -m uvicorn api.index:app --reload --port 3000",
+    "start": "python -m uvicorn api.index:app --host 0.0.0.0 --port 3000"
+  },
+  "keywords": ["ai-agent", "data-cleaning", "analytics", "fastapi", "vercel"]
+}

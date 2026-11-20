@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Thuyết Trình Dự Án · AI AGENT BI Platform</title>
+    <!-- Google Fonts & Tailwind & FontAwesome & Animate.css -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ff4d6d',
+                        primaryDark: '#c9184a',
+                        softPink: '#fff0f3',
+                        tealDark: '#107c41',
+                        tealLight: '#2ec4b6'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90vw;
+            max-width: 1350px;
+            height: 85vh;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 28px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            padding: 45px 60px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(18px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Gradient header text */
+        .gradient-text {
+            background: linear-gradient(135deg, #ff4d6d 0%, #c9184a 50%, #8338ec 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-pill {
+            background: #ffffff;
+            border: 1.5px solid #ffccd5;
+            border-radius: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .card-pill:hover {
+            transform: translateY(-4px);
+            border-color: #ff4d6d;
+            box-shadow: 0 12px 25px rgba(255, 77, 109, 0.12);
+        }
+
+        .badge-step {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        /* Navigation Floating Controls */
+        .nav-controls {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 8px 24px;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-nav {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-nav:hover {
+            background: #ff4d6d;
+            transform: scale(1.1);
+        }
+
+        .progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 100;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4d6d, #2ec4b6);
+            width: 14.28%;
+            transition: width 0.3s ease;
+        }
+
+        /* Dot Indicators */
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: #ff4d6d;
+            width: 28px;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar-container">
+        <div id="progressBar" class="progress-bar-fill"></div>
+    </div>
+
+    <div class="slide-container">
+
+        <!-- ================= SLIDE 1: TIÊU ĐỀ ================= -->
+        <div class="slide active justify-between" id="slide-1">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-pink-500 to-rose-600 flex items-center justify-center text-white text-xl shadow-lg">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div>
+                        <div class="text-xl font-extrabold text-slate-800 tracking-tight">AI AGENT</div>
+                        <div class="text-xs font-semibold text-rose-500">Business Intelligence Platform</div>
+                    </div>
+                </div>
+                <span class="px-4 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-rose-600 font-bold text-xs uppercase tracking-wider">
+                    <i class="fa-solid fa-sparkles mr-1.5"></i> Dự Án Tốt Nghiệp / Báo Cáo
+                </span>
+            </div>
+
+            <div class="my-auto text-center max-w-4xl mx-auto">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-pink-100 text-pink-700 text-sm font-bold mb-4 animate-pulse">
+                    Nền Tảng Phân Tích & Chuẩn Hóa Dữ Liệu Tự Động
+                </span>
+                <h1 class="text-5xl md:text-6xl font-black text-slate-900 leading-tight mb-6">
+                    HỆ THỐNG <span class="gradient-text">AI AGENT</span><br>TỰ ĐỘNG HÓA QUY TRÌNH BI
+                </h1>
+                <p class="text-lg md:text-xl text-slate-600 leading-relaxed font-medium max-w-2xl mx-auto mb-8">
+                    Giải pháp tích hợp toàn diện: từ tiếp nhận dữ liệu đa kênh, kiểm tra tính hợp lệ, làm sạch tự động, đến phân tích chuyên sâu và xuất Dashboard báo cáo tương tác.
+                </p>
+
+                <div class="inline-flex gap-4">
+                    <div class="px-6 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 font-bold text-sm">
+                        <i class="fa-solid fa-layer-group text-rose-500 mr-2"></i>Quy trình 6 bước chuẩn
+                    </div>
+                    <div class="px-6 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 font-bold text-sm">
+                        <i class="fa-solid fa-brain text-teal-600 mr-2"></i>Tích hợp Gemini 2.5 Flash
+                    </div>
+                    <div class="px-6 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700 font-bold text-sm">
+                        <i class="fa-solid fa-chart-pie text-indigo-500 mr-2"></i>Dynamic BI Charts
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center text-sm font-semibold text-slate-400 border-t border-slate-100 pt-4">
+                <span>Người thực hiện: <b class="text-slate-700">Nhóm Dự Án AI AGENT</b></span>
+                <span>Công nghệ: <b class="text-slate-700">Python FastAPI · Pandas · Chart.js · Vercel</b></span>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 2: BỐI CẢNH & VẤN ĐỀ ================= -->
+        <div class="slide justify-between" id="slide-2">
+            <div>
+                <span class="text-xs font-black text-rose-500 uppercase tracking-widest">Phần 01 · Đặt vấn đề</span>
+                <h2 class="text-4xl font-extrabold text-slate-900 mt-1">THỰC TRẠNG & BÀI TOÁN KINH DOANH</h2>
+                <p class="text-slate-500 font-medium text-sm mt-1">Tại sao các doanh nghiệp vừa và nhỏ (SMEs) gặp khó khăn khi làm báo cáo kinh doanh?</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-6 my-auto">
+                <div class="card-pill p-6">
+                    <div class="w-14 h-14 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center text-2xl mb-4">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Dữ Liệu Bẩn & Rời Rạc</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Tệp dữ liệu xuất từ các kênh bán (Shopee, TikTok, Cửa hàng) chứa nhiều khoảng trắng thừa, dòng trống, dữ liệu trùng lặp và định dạng tiền tệ không đồng nhất.
+                    </p>
+                </div>
+
+                <div class="card-pill p-6">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl mb-4">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Xử Lý Thủ Công Tốn Giờ</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Nhân viên kế toán / kinh doanh phải dùng Excel ghép dòng, viết hàm lọc thủ công nhiều giờ liền, dễ dẫn đến sai sót số liệu và chậm trễ ra quyết định.
+                    </p>
+                </div>
+
+                <div class="card-pill p-6">
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl mb-4">
+                        <i class="fa-solid fa-chart-line-down"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Thiếu Tính Trực Quan BI</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Thiếu công cụ trực quan hóa chuyên nghiệp. Các con số nằm im trong bảng tính thô, không tự động sinh ra nhận định xu hướng hay cảnh báo bất thường.
+                    </p>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-center gap-4">
+                <div class="text-rose-600 text-2xl pl-2"><i class="fa-solid fa-bullseye"></i></div>
+                <div class="text-sm text-slate-700 font-semibold">
+                    <b class="text-rose-600">Mục tiêu dự án:</b> Xây dựng ứng dụng Web dạng <span class="text-slate-900 font-bold">Wizard 6 bước tuần tự</span> giúp người dùng chỉ cần đưa file dữ liệu vào, toàn bộ quá trình kiểm tra, làm sạch, phân tích và xuất Dashboard được tự động hóa 100%.
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 3: QUY TRÌNH 6 BƯỚC TUẦN TỰ ================= -->
+        <div class="slide justify-between" id="slide-3">
+            <div>
+                <span class="text-xs font-black text-rose-500 uppercase tracking-widest">Phần 02 · Kiến trúc luồng</span>
+                <h2 class="text-4xl font-extrabold text-slate-900 mt-1">QUY TRÌNH VẬN HÀNH 6 BƯỚC CHUẨN</h2>
+                <p class="text-slate-500 font-medium text-sm mt-1">Được thiết kế theo đúng mô hình Data Pipeline công nghiệp, không bỏ bước</p>
+            </div>
+
+            <div class="grid grid-cols-6 gap-3 my-auto">
+                <!-- Bước 1 -->
+                <div class="card-pill p-4 flex flex-col justify-between text-center">
+                    <div>
+                        <span class="badge-step bg-rose-100 text-rose-600 mb-3">Bước 1</span>
+                        <div class="w-10 h-10 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-2 text-lg">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Nhập Liệu</h4>
+                        <p class="text-xs text-slate-500">Tải file Excel, CSV hoặc dán link Google Sheet công khai.</p>
+                    </div>
+                </div>
+
+                <!-- Bước 2 -->
+                <div class="card-pill p-4 flex flex-col justify-between text-center">
+                    <div>
+                        <span class="badge-step bg-sky-100 text-sky-600 mb-3">Bước 2</span>
+                        <div class="w-10 h-10 rounded-full bg-sky-50 text-sky-500 flex items-center justify-center mx-auto mb-2 text-lg">
+                            <i class="fa-solid fa-shield-check"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Validation Gate</h4>
+                        <p class="text-xs text-slate-500">Kiểm tra định dạng, encoding, số dòng, cột ban đầu.</p>
+                    </div>
+                </div>
+
+                <!-- Bước 3 -->
+                <div class="card-pill p-4 flex flex-col justify-between text-center">
+                    <div>
+                        <span class="badge-step bg-emerald-100 text-emerald-600 mb-3">Bước 3</span>
+                        <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mx-auto mb-2 text-lg">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Cleaning</h4>
+                        <p class="text-xs text-slate-500">Khử trùng, xóa dòng trống, cắt khoảng trắng, chuẩn hóa tiền.</p>
+                    </div>
+                </div>
+
+                <!-- Bước 4 -->
+                <div class="card-pill p-4 flex flex-col justify-between text-center">
+                    <div>
+                        <span class="badge-step bg-amber-100 text-amber-600 mb-3">Bước 4</span>
+                        <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center mx-auto mb-2 text-lg">
+                            <i class="fa-solid fa-chart-column"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Process BI</h4>
+                        <p class="text-xs text-slate-500">Phân tích theo bối cảnh, so sánh nhóm, thống kê cột.</p>
+                    </div>
+                </div>
+
+                <!-- Bước 5 -->
+                <div class="card-pill p-4 flex flex-col justify-between text-center">
+                    <div>
+                        <span class="badge-step bg-purple-100 text-purple-600 mb-3">Bước 5</span>
+                        <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center mx-auto mb-2 text-lg">
+                            <i class="fa-solid fa-badge-check"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Verify AI</h4>
+                        <p class="text-xs text-slate-500">Kiểm định số liệu, sinh nhận định chiến lược & Feedback.</p>
+                    </div>
+                </div>
+
+                <!-- Bước 6 -->
+                <div class="card-pill p-4 flex flex-col justify-between text-center">
+                    <div>
+                        <span class="badge-step bg-teal-100 text-teal-600 mb-3">Bước 6</span>
+                        <div class="w-10 h-10 rounded-full bg-teal-50 text-teal-500 flex items-center justify-center mx-auto mb-2 text-lg">
+                            <i class="fa-solid fa-file-export"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm mb-1">Xuất Báo Cáo</h4>
+                        <p class="text-xs text-slate-500">Xem Dashboard HTML tương tác và tải tệp Excel sạch.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex justify-between items-center font-medium">
+                <span><i class="fa-solid fa-lock text-slate-400 mr-2"></i><b>Strict Wizard Control:</b> Người dùng bắt buộc hoàn thành tuần tự từng bước, không thể nhảy cóc.</span>
+                <span class="text-rose-600 font-bold"><i class="fa-solid fa-rotate-left mr-1"></i>Hỗ trợ phản hồi (Feedback Loop) tại Bước 5 để tinh chỉnh số liệu</span>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 4: TÍNH NĂNG NỔI BẬT ================= -->
+        <div class="slide justify-between" id="slide-4">
+            <div>
+                <span class="text-xs font-black text-rose-500 uppercase tracking-widest">Phần 03 · Công nghệ & Tính năng</span>
+                <h2 class="text-4xl font-extrabold text-slate-900 mt-1">CÁC TÍNH NĂNG VƯỢT TRỘI CỦA ỨNG DỤNG</h2>
+                <p class="text-slate-500 font-medium text-sm mt-1">Được tối ưu trải nghiệm người dùng với độ chính xác số học cao</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 my-auto">
+                <div class="card-pill p-6 flex gap-4 items-start">
+                    <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl shrink-0">
+                        <i class="fa-solid fa-filter"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-base mb-1">Quy Tắc Làm Sạch Linh Hoạt (Cleaning Rules)</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Cung cấp các lựa chọn làm sạch bằng checkbox: cắt khoảng trắng đầu cuối, loại bỏ dòng hoàn toàn trống, khử dòng trùng lặp, xóa dòng thiếu dữ liệu. Cập nhật xem trước ngay lập tức.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card-pill p-6 flex gap-4 items-start">
+                    <div class="w-12 h-12 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl shrink-0">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-base mb-1">So Sánh Theo Nhóm Động (Dynamic Aggregation)</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Tính toán thật 100% khi người dùng tương tác với 3 dropdown: <i>Nhóm theo, Phép tổng hợp (Tổng, Trung bình, Đếm số lượng), Cột số</i>. Biểu diễn trực quan bằng thanh đo % tỉ lệ.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card-pill p-6 flex gap-4 items-start">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl shrink-0">
+                        <i class="fa-solid fa-table-columns"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-base mb-1">Thống Kê Chi Tiết Từng Cột (Column Stats)</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Bảng kiểm định nhận diện tự động từng loại cột: số lượng ô khuyết, số giá trị khác biệt (unique count), giá trị trung bình, nhỏ nhất (Min) và lớn nhất (Max) chuẩn định dạng Việt Nam.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card-pill p-6 flex gap-4 items-start">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shrink-0">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-base mb-1">Xuất Báo Cáo Dashboard BI Chuẩn Mực</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Báo cáo xuất ra tích hợp thanh menu Sidebar quy trình, 5 tab phân tích chuyên đề, 4 thẻ KPI chỉ số tài chính, biểu đồ tăng trưởng và nút in ấn / lưu trữ HTML độc lập.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-500 font-semibold border-t border-slate-100 pt-3">
+                <span><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i>Tích hợp sẵn 4 bộ dữ liệu mẫu thực tế</span>
+                <span><i class="fa-solid fa-check text-emerald-500 mr-1.5"></i>Xử lý CSV đa bảng mã (UTF-8-SIG, Latin-1, CP1258)</span>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 5: DEMO MẪU BÁO CÁO (THEO ẢNH) ================= -->
+        <div class="slide justify-between" id="slide-5">
+            <div>
+                <span class="text-xs font-black text-rose-500 uppercase tracking-widest">Phần 04 · Kết quả đầu ra</span>
+                <h2 class="text-4xl font-extrabold text-slate-900 mt-1">BÁO CÁO KINH DOANH CHUYÊN SÂU</h2>
+                <p class="text-slate-500 font-medium text-sm mt-1">Được thiết kế hiện đại, đồng bộ màu sắc và cấu trúc chuyên nghiệp</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-6 my-auto">
+                <div class="card-pill p-5">
+                    <div class="text-rose-500 text-lg font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-gauge-high"></i> Dashboard KPI Kinh Doanh
+                    </div>
+                    <ul class="text-xs text-slate-600 space-y-2">
+                        <li>• <b>Số đơn hàng:</b> Thống kê tổng lượt giao dịch.</li>
+                        <li>• <b>Doanh thu:</b> Theo dõi doanh số & tỷ lệ tăng trưởng.</li>
+                        <li>• <b>Lợi nhuận gộp:</b> Tính toán biên độ lợi nhuận.</li>
+                        <li>• <b>Chi phí giá vốn:</b> Giám sát ngân sách thực tế.</li>
+                    </ul>
+                </div>
+
+                <div class="card-pill p-5">
+                    <div class="text-teal-600 text-lg font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line"></i> Biểu Đồ Đa Chiều
+                    </div>
+                    <ul class="text-xs text-slate-600 space-y-2">
+                        <li>• <b>Doanh thu theo thời gian:</b> Đường xu hướng 12 tháng.</li>
+                        <li>• <b>Cơ cấu chi phí:</b> Biểu đồ tròn Doughnut phân bổ kênh.</li>
+                        <li>• <b>Đóng góp doanh thu:</b> Thanh tiến trình đo tỷ trọng.</li>
+                        <li>• <b>Thay đổi doanh thu:</b> Phân biệt tăng trưởng âm/dương.</li>
+                    </ul>
+                </div>
+
+                <div class="card-pill p-5">
+                    <div class="text-indigo-600 text-lg font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i> Phân Tích Chuyên Đề
+                    </div>
+                    <ul class="text-xs text-slate-600 space-y-2">
+                        <li>• <b>Doanh thu theo Kênh:</b> Website, Cửa hàng, Đối tác.</li>
+                        <li>• <b>Hiệu quả Marketing:</b> Đánh giá kênh tìm kiếm, MXH.</li>
+                        <li>• <b>Khung nhận định AI:</b> Đưa ra tư vấn chiến lược tức thì.</li>
+                        <li>• <b>Kiểm định chất lượng:</b> Minh bạch số liệu nguồn.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between">
+                <span><i class="fa-solid fa-download mr-2"></i>File báo cáo xuất bản có thể hoạt động độc lập ở bất kỳ đâu mà không cần cài đặt phần mềm phụ trợ.</span>
+                <span class="bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-bold">100% Offline Accessible</span>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 6: CÔNG NGHỆ & TRIỂN KHAI ================= -->
+        <div class="slide justify-between" id="slide-6">
+            <div>
+                <span class="text-xs font-black text-rose-500 uppercase tracking-widest">Phần 05 · Nền tảng kỹ thuật</span>
+                <h2 class="text-4xl font-extrabold text-slate-900 mt-1">KIẾN TRÚC CÔNG NGHỆ & CLOUD</h2>
+                <p class="text-slate-500 font-medium text-sm mt-1">Được xây dựng theo tiêu chuẩn đám mây hiện đại, nhẹ và tốc độ cao</p>
+            </div>
+
+            <div class="grid grid-cols-4 gap-5 my-auto">
+                <div class="card-pill p-5 text-center">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl mx-auto mb-3">
+                        <i class="fa-brands fa-python"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-sm mb-1">FastAPI Backend</h4>
+                    <p class="text-xs text-slate-500">Bất đồng bộ (Async), tốc độ phản hồi tính bằng mili-giây, định tuyến RESTful API chuẩn mực.</p>
+                </div>
+
+                <div class="card-pill p-5 text-center">
+                    <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center text-xl mx-auto mb-3">
+                        <i class="fa-solid fa-table"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-sm mb-1">Pandas & NumPy</h4>
+                    <p class="text-xs text-slate-500">Xử lý DataFrame mạnh mẽ, dọn dẹp hàng triệu ô dữ liệu, tính toán ma trận thống kê chuẩn xác.</p>
+                </div>
+
+                <div class="card-pill p-5 text-center">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl mx-auto mb-3">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-sm mb-1">Chart.js & Bootstrap 5</h4>
+                    <p class="text-xs text-slate-500">Giao diện người dùng mượt mà, biểu đồ tương tác động, độ tương thích 100% trên mọi thiết bị.</p>
+                </div>
+
+                <div class="card-pill p-5 text-center">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center text-xl mx-auto mb-3">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-sm mb-1">Sẵn Sàng Vercel</h4>
+                    <p class="text-xs text-slate-500">Cấu hình sẵn file `vercel.json` phục vụ Serverless Function, triển khai nhanh chóng chỉ với 1 cú click.</p>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex justify-between items-center font-medium">
+                <span><i class="fa-solid fa-code text-slate-400 mr-2"></i>Mã nguồn phân tách rõ ràng: <code>api/agent.py</code> (Logic Core) & <code>api/index.py</code> (API & UI).</span>
+                <span class="text-slate-800 font-bold">100% Test Passed</span>
+            </div>
+        </div>
+
+        <!-- ================= SLIDE 7: KẾT LUẬN & Q&A ================= -->
+        <div class="slide justify-between text-center" id="slide-7">
+            <div class="flex justify-between items-center text-left">
+                <span class="text-xs font-black text-rose-500 uppercase tracking-widest">Phần 06 · Tổng kết</span>
+                <span class="text-xs font-bold text-slate-400">AI AGENT BI Project</span>
+            </div>
+
+            <div class="my-auto max-w-2xl mx-auto">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-pink-500 to-rose-600 text-white text-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h2 class="text-4xl font-extrabold text-slate-900 mb-4">CẢM ƠN THẦY CÔ & CÁC BẠN ĐÃ LẮNG NGHE!</h2>
+                <p class="text-slate-600 font-medium text-base mb-8">
+                    Hệ thống đã sẵn sàng cho buổi trải nghiệm và phân tích dữ liệu thực tế tại:
+                    <br><b class="text-rose-600 text-lg">http://localhost:3000</b>
+                </p>
+
+                <div class="inline-flex gap-4">
+                    <a href="http://localhost:3000" target="_blank" class="px-8 py-3.5 rounded-2xl bg-rose-500 text-white font-bold text-sm shadow-lg hover:bg-rose-600 transition flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Mở Ứng Dụng Live Demo
+                    </a>
+                </div>
+            </div>
+
+            <div class="text-xs font-semibold text-slate-400 border-t border-slate-100 pt-4">
+                Sẵn sàng giải đáp các câu hỏi (Q&A) từ Hội đồng đánh giá
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation Floating Controls -->
+    <div class="nav-controls">
+        <button class="btn-nav" onclick="prevSlide()" title="Slide trước (Phím Mũi tên trái)">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <div class="flex items-center gap-2">
+            <div class="dot active" onclick="goToSlide(1)"></div>
+            <div class="dot" onclick="goToSlide(2)"></div>
+            <div class="dot" onclick="goToSlide(3)"></div>
+            <div class="dot" onclick="goToSlide(4)"></div>
+            <div class="dot" onclick="goToSlide(5)"></div>
+            <div class="dot" onclick="goToSlide(6)"></div>
+            <div class="dot" onclick="goToSlide(7)"></div>
+        </div>
+
+        <button class="btn-nav" onclick="nextSlide()" title="Slide sau (Phím Mũi tên phải hoặc Phím Space)">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <span class="text-xs font-bold text-slate-300 ml-2" id="slideIndicator">1 / 7</span>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 7;
+
+        function showSlide(n) {
+            if (n < 1) n = 1;
+            if (n > totalSlides) n = totalSlides;
+            currentSlide = n;
+
+            // Cập nhật slide active
+            document.querySelectorAll('.slide').forEach((s, idx) => {
+                s.classList.remove('active');
+                if (idx + 1 === currentSlide) {
+                    s.classList.add('active');
+                }
+            });
+
+            // Cập nhật dots
+            document.querySelectorAll('.dot').forEach((d, idx) => {
+                if (idx + 1 === currentSlide) {
+                    d.classList.add('active');
+                } else {
+                    d.classList.remove('active');
+                }
+            });
+
+            // Cập nhật chỉ số và thanh progress
+            document.getElementById('slideIndicator').innerText = `${currentSlide} / ${totalSlides}`;
+            const pct = (currentSlide / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = pct + '%';
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+        }
+
+        // Bắt phím điều hướng (Mũi tên, Space, PageUp, PageDown)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'Home') {
+                showSlide(1);
+            } else if (e.key === 'End') {
+                showSlide(totalSlides);
+            }
+        });
+    </script>
+</body>
+</html>
